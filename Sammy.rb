@@ -1,9 +1,16 @@
+require 'logger'
 require 'discordrb'
 require 'configatron'
 require_relative 'config.rb'
 
 
 bot = Discordrb::Commands::CommandBot.new token: configatron.token , client_id: 271228733749329920, prefix: '!$'
+
+logger = Logger.new(STDERR)
+logger = Logger.new(STDOUT)
+log = Logger.new('Logfile.txt', 20, 1024000,)
+log.level = Logger::DEBUG
+logger.add(Logger::FATAL) { 'Fatal error!' }
 
 
 bot.message(content: 'Ping!') do |event|
@@ -27,6 +34,8 @@ end
 bot.command(:exit, help_available: false) do |event|
   break unless event.user.id == 138116156488679425
   bot.send_message(event.channel.id, "The bot is shutting down now.")
+  print "Bot was killed by owner"
+  logger.close
   exit
 end
 
@@ -34,5 +43,7 @@ end
 #  event << 
 
 bot.run :async
-#print "Bot is now running"
+print "Bot is now running"
+
+
 bot.sync 
